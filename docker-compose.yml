@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  node:
+    image: node:10.0
+    volumes:
+      - './:/var/www/html'
+    working_dir: /var/www/html
