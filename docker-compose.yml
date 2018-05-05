@@ -1,8 +1,12 @@
 version: '2'
 
 services:
-  node:
-    image: node:10.0
+  app:
+    image: headless-chrome-fetcher:1.0.0
+    build: .
     volumes:
       - './:/var/www/html'
+    ports:
+      - "${HOST_PORT}:80"
     working_dir: /var/www/html
+    command: "npm run start"

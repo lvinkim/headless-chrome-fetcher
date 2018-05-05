@@ -2,7 +2,11 @@
 
 !.gitignore
 
+!/public/
+!/tests/
+!/var/
 !.env.example
 !docker-compose.yml
+!Dockerfile
 !package.json
 !package-lock.json
