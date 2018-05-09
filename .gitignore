@@ -3,6 +3,7 @@
 !.gitignore
 
 !/public/
+!/src/
 !/tests/
 !/var/
 !.env.example
