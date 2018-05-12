@@ -3,6 +3,7 @@
 const env = require('node-env-file');
 const restify = require('restify');
 const validUrl = require('valid-url');
+const url = require('url');
 const createFetcher = require('../src/fetcher');
 
 env(__dirname + '/../.env'); // 加载 .env 文件
@@ -16,11 +17,18 @@ server.use(restify.plugins.bodyParser({mapParams: true}));// 解析 post body �
 server.post('/fetch/html', async (req, res, next) => {
 
     try {
-        let url = req.params.url;
+        let reqUrl = req.params.url;
+        let cookies = req.params.cookies;
         let html = "";
 
-        if (validUrl.isUri(url)) {
-            html = await fetcher.getHtml(url, {});
+        if (validUrl.isUri(reqUrl)) {
+
+            let hostname = url.parse(reqUrl).hostname;
+            for (let i = 0; i < cookies.length; i++) {
+                cookies[i].domain = hostname;
+            }
+            // console.dir(cookies);
+            html = await fetcher.getHtml(reqUrl, {cookies: cookies});
         } else {
             html = "error 'url' value";
         }
@@ -29,6 +37,7 @@ server.post('/fetch/html', async (req, res, next) => {
         res.header('content-type', 'text/html');
         res.send(html);
     } catch (e) {
+        console.info(e.getExceptionMessage());
         next(e)
     }
 
@@ -39,7 +48,7 @@ createFetcher().then(
         fetcher = createFetcher;
         console.info('Initialized fetcher.');
         server.listen('80', function () {
-            console.log('%s listening at %s', server.name, server.url);
+            console.log('%s listening at %s -> host:%s', server.name, server.url, process.env.HOST_PORT);
         });
     }
 ).catch(e => {
